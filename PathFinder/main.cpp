@@ -1,3 +1,11 @@
+/*Simple visualization for Bfs algorithm
+* Runs on release x64
+* Some Project components like gui class are not ready but feel free to finish them
+*
+*
+* (c) 2022 Ahmed Jlidi
+*/
+
 #include <iostream>
 #include <queue>
 #include <map>
