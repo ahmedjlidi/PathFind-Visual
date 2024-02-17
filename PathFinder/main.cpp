@@ -25,8 +25,9 @@ Event event;
 Map* grid_map = new Map();
 std::vector<sf::Vector2f> path;
 static Clock timer;
-int distance = 0;
+bool pathFound = false;
 static map<string, Text> texts;
+
 
 bool vector2fEqual(const sf::Vector2f& left, const sf::Vector2f& right)
 {
@@ -185,8 +186,14 @@ int main()
     
     auto window = win->getWindow();
     static int index = 0;
+    Clock clock;
+    float speed = 5.f;
+    int currentPathIndex = 0;
+
+
     while (window->isOpen())
     {
+        Time deltatime = clock.restart();
         while (window->pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
@@ -204,6 +211,8 @@ int main()
             {
                 bfs(*grid_map->getStartPos(), *grid_map->getTargetPos(), *grid_map->getMap(), path);
                 printPath(path, *grid_map, *grid_map->getStartPos(), *grid_map->getTargetPos());
+                pathFound = true;
+                grid_map->getCells()[*grid_map->getStartPos()].setFillColor(sf::Color::Blue);
                
 
             }
@@ -212,17 +221,39 @@ int main()
             ++index;
 
         }
-        else
-            timer.restart();
 
         if (Keyboard::isKeyPressed(Keyboard::R))
         {
             reset();
             index = 0;
             path.clear();
+            pathFound = false;
+            currentPathIndex = 0;
 
         }
         window->clear(Color::Black);
+        if (pathFound)
+        {
+            if (currentPathIndex < path.size()) 
+            {
+                sf::Vector2f direction = path[currentPathIndex] - grid_map->getPlayer().getPosition();
+                float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+
+                if (distance <= speed) {
+                    // If the distance is less than or equal to speed, directly set position to the point
+                    grid_map->getPlayer().setPosition(path[currentPathIndex]);
+                    currentPathIndex++;
+                }
+                else {
+                    // Move the rectangle towards the point
+                    sf::Vector2f normalizedDir = direction / distance;
+                    grid_map->getPlayer().move(normalizedDir * speed );
+                }
+            }
+            
+              
+
+        }
         grid_map->render(*window);
 
         renderGUi(*window);

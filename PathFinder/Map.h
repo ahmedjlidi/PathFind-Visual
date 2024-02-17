@@ -36,6 +36,7 @@ private:
 
     
     cell_map map;
+    RectangleShape player;
 
     Vector2f *Start = nullptr;
     Vector2f *Target = nullptr;
@@ -52,7 +53,7 @@ public:
     cell_map* getMap();
     Vector2f* getStartPos();
     Vector2f* getTargetPos();
-
+    RectangleShape& getPlayer();
     void reset();
     
     std::map<Vector2f, RectangleShape>& getCells();

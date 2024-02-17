@@ -18,6 +18,11 @@ void Map::InitMap()
     shape.setOutlineThickness(1.f);
     shape.setOutlineColor(Color::Black);
 
+    this->player.setSize(Vector2f(cell_width, cell_width));
+    this->player.setFillColor(Color::Red);
+    this->player.setOutlineThickness(1.f);
+    this->player.setOutlineColor(Color::Black);
+
 
     for (short i = 0; i < MapInfo::WINDOW_WIDTH / MapInfo::CELL_WIDTH; ++i)
     {
@@ -57,6 +62,11 @@ Vector2f* Map::getTargetPos()
     return this->Target;
 }
 
+RectangleShape& Map::getPlayer()
+{
+    return this->player;
+}
+
 void Map::reset()
 {
     this->Start = nullptr;
@@ -91,6 +101,7 @@ void Map::update(const RenderWindow& target)
                 {
                     if (cell.second.getPosition() == *this->Start)
                     {
+                       
                         continue;
                     }
                 }
@@ -120,6 +131,8 @@ void Map::update(const RenderWindow& target)
             {
                 this->Start = new Vector2f(cell.second.getPosition());
                 cell.second.setFillColor(Color::Red);
+
+                this->player.setPosition(*this->Start);
             }
         }
         else if (Mouse::isButtonPressed(Mouse::Right)
@@ -142,6 +155,10 @@ void Map::render(RenderTarget& target)
     for (const auto& cell : this->cells)
     {
         target.draw(cell.second);
+    }
+    if (this->Start)
+    {
+        target.draw(this->player);
     }
 }
 
